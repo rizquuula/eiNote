@@ -14,7 +14,7 @@ function NoteView() {
         <NotebookList />
       </div>
     </div>
-    <div id='note.editor' className='flex flex-col w-10/12'>
+    <div id='note.editor' className='flex flex-col gap-2 w-10/12'>
       <p className="font-semibold text-main-normal">Note Editor</p>
       <NoteEditor />
     </div>

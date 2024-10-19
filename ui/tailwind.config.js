@@ -3,6 +3,14 @@ module.exports = {
   content: ["./src/**/*.{html,js,tsx}"],
   theme: {
     extend: {
+      fontSize: {
+        'h1': ['2rem', { lineHeight: '2.5rem' }], // Set specific font size and line height
+        'h2': ['1.75rem', { lineHeight: '2.25rem' }],
+        'h3': ['1.5rem', { lineHeight: '2rem' }],
+        'h4': ['1.25rem', { lineHeight: '1.75rem' }],
+        'h5': ['1rem', { lineHeight: '1.5rem' }],
+        'h6': ['0.875rem', { lineHeight: '1.25rem' }],
+      },
       colors: {
         main: {
           normal: '#10B981', // emerald-500

@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* styles.css */
+
+h1 {
+  @apply text-4xl font-bold leading-tight; /* Tailwind styles */
+}
+
+h2 {
+  @apply text-3xl font-semibold leading-tight; /* Tailwind styles */
+}
+
+h3 {
+  @apply text-2xl font-medium leading-tight; /* Tailwind styles */
+}
+
+h4 {
+  @apply text-xl font-medium leading-tight; /* Tailwind styles */
+}
+
+h5 {
+  @apply text-lg font-medium leading-tight; /* Tailwind styles */
+}
