@@ -1,5 +1,5 @@
 {
-    "[javascript]": {
+    "[typescriptreact]": {
         "editor.formatOnSave": true,
         "editor.indentSize": 2,
         "editor.defaultFormatter": "vscode.typescript-language-features",
