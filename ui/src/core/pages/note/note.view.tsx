@@ -4,11 +4,13 @@ import NotebookList from "../../components/note/notebook.list"
 
 function NoteView() {
   return <div id='note' className='flex flex-row'>
-    <div id='note.sidebar' className='w-2/12'>
-      <div id='note'>
+    <div id='note.sidebar' className='w-2/12 flex flex-col gap-8'>
+      <div id='note' className="flex flex-col gap-2">
+        <p className="font-semibold text-main-normal">My Notes</p>
         <NoteList />
       </div>
-      <div id='notebook'>
+      <div id='notebook' className="flex flex-col gap-2">
+        <p className="font-semibold text-main-normal">My Notebooks</p>
         <NotebookList />
       </div>
     </div>

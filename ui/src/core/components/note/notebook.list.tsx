@@ -1,12 +1,12 @@
+import { NotebookPreviewMock } from '../../test/mock/notebook.preview.mock';
 import Notebook from './notebook';
 
 function NotebookList() {
-  const array = Array.from({ length: 3 }, (v, i) => i + 1);
 
   return (
-    <div>
-      {array.map(() => {
-        return <Notebook />
+    <div className='flex flex-col gap-2'>
+      {NotebookPreviewMock.map((data, i) => {
+        return <Notebook key={i} data={data} />
       })}
     </div>
   )

@@ -1,19 +1,15 @@
-import Notepreview from '../../models/note.preview';
+import NotePreview from '../../models/note.preview';
 
-function Note() {
-  const data = new Notepreview(
-    "Title Example",
-    "Note description this can be expanded up to 3 lines, after that begin blank blank blank, like this",
-    new Date(),
-  )
+
+function Note({ data }: { data: NotePreview }) {
 
   return (
     <div className='flex flex-row flex-grow'>
-      <div className='w-1 bg-green-500'></div>
-      <div className='flex flex-col bg-zinc-900 p-2 flex-grow'>
+      <div className={data.IsActive ? 'w-1 bg-main-normal' : 'w-1 bg-background-accent-hover'}></div>
+      <div className='flex flex-col bg-background-accent-normal hover:bg-background-accent-hover p-2 flex-grow duration-500 cursor-pointer'>
         <p className=''>{data.Title}</p>
-        <p className='text-sm'>{data.Description}</p>
-        <div className='flex flex-row justify-between'>
+        <p className='text-xs font-thin'>{data.Description}</p>
+        <div className='flex flex-row justify-between mt-2'>
           <div className='flex flex-row gap-2'>
             <p className='text-xs'>Saturday</p>
           </div>
