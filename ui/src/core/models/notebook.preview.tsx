@@ -1,8 +1,10 @@
 class NotebookPreview {
+  ID: string
   Title: string
   IsActive: boolean
 
-  constructor(title: string) {
+  constructor(id: string, title: string) {
+    this.ID = id
     this.Title = title
     this.IsActive = false
   }

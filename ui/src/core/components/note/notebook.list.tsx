@@ -1,11 +1,11 @@
-import { NotebookPreviewMock } from '../../test/mock/notebook.preview.mock';
+import NotebookPreview from '../../models/notebook.preview';
 import Notebook from './notebook';
 
-function NotebookList() {
+function NotebookList({ notebooks }: { notebooks: NotebookPreview[] }) {
 
   return (
     <div className='flex flex-col gap-2'>
-      {NotebookPreviewMock.map((data, i) => {
+      {notebooks.map((data, i) => {
         return <Notebook key={i} data={data} />
       })}
     </div>

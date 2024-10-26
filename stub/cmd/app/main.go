@@ -11,6 +11,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -39,7 +40,16 @@ func main() {
 	v1.HandleFunc("/notes", noteController.ReadNotes).Methods("GET")
 	v1.HandleFunc("/notebooks", notebookConteroller.ReadNotebooks).Methods("GET")
 
-	if err := http.ListenAndServe(":"+sPort, r); err != nil {
+	c := cors.New(cors.Options{
+		AllowedOrigins:   []string{"http://localhost:3000"}, // Allow specific origin
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Content-Type", "Authorization"},
+		AllowCredentials: true,
+	})
+
+	handler := c.Handler(r)
+
+	if err := http.ListenAndServe(":"+sPort, handler); err != nil {
 		log.Fatal(err.Error())
 	}
 }
