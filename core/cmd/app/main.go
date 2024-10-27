@@ -3,8 +3,11 @@ package main
 import (
 	noteappservice "core/internal/application/service/note"
 	notebookappservice "core/internal/application/service/notebook"
-	"core/internal/interfaces/rest/note"
-	"core/internal/interfaces/rest/notebook"
+	noterepository "core/internal/infrastructure/postgresql/note"
+	notebookrepository "core/internal/infrastructure/postgresql/notebook"
+	notecontroller "core/internal/interfaces/rest/note"
+	notebookcontroller "core/internal/interfaces/rest/notebook"
+	"core/pkg/database"
 	"log"
 	"net/http"
 	"os"
@@ -27,11 +30,25 @@ func main() {
 	}
 	log.Printf("Application will run on port %s", sPort)
 
-	noteService := noteappservice.New()
-	notebookService := notebookappservice.New()
+	db, err := database.Driver{
+		User:         os.Getenv("DB_USER"),
+		Password:     os.Getenv("DB_PASSWORD"),
+		DatabaseName: os.Getenv("DB_NAME"),
+		Host:         os.Getenv("DB_HOST"),
+		Port:         os.Getenv("DB_PORT"),
+	}.NewPostgresConn()
+	if err != nil {
+		log.Fatalf("Error db connection: %v", err)
+	}
 
-	noteController := note.New(noteService)
-	notebookConteroller := notebook.New(notebookService)
+	noteRepository := noterepository.New(db)
+	notebookRepository := notebookrepository.New(db)
+
+	noteService := noteappservice.New(noteRepository)
+	notebookService := notebookappservice.New(notebookRepository)
+
+	noteController := notecontroller.New(noteService)
+	notebookConteroller := notebookcontroller.New(notebookService)
 
 	r := mux.NewRouter()
 	v1 := r.PathPrefix("/v1").Subrouter()

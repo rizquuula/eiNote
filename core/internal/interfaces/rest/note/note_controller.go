@@ -16,10 +16,9 @@ type noteController struct {
 }
 
 func (n *noteController) ReadNotes(w http.ResponseWriter, r *http.Request) {
-	userId := "test-user"
 	queryParams := r.URL.Query()
 	notebookId := queryParams.Get("notebook")
-	notesResult, err := n.noteService.ReadNotes(r.Context(), notebookId, userId)
+	notesResult, err := n.noteService.ReadNotes(r.Context(), notebookId)
 	if err != nil {
 		httpresponse.NewResponseError(w, err)
 		return
@@ -39,13 +38,17 @@ func (n *noteController) WriteNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if note.ID.String() == "" || note.Content == "" {
+	if note.Content == "" {
 		httpresponse.NewResponseError(w, err)
 		return
 	}
 
-	_ = n.noteService.WriteNote(r.Context(), note)
-	httpresponse.NewResponse(w, "Success Write Note", nil)
+	note, err = n.noteService.WriteNote(r.Context(), note)
+	if err != nil {
+		httpresponse.NewResponseError(w, err)
+		return
+	}
+	httpresponse.NewResponse(w, "Success Write Note", note)
 }
 
 func New(

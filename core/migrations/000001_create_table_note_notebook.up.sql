@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS note (
+    id VARCHAR PRIMARY KEY,
+    content TEXT NOT NULL,
+    updated_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS notebook (
+    id VARCHAR PRIMARY KEY,
+    title TEXT NOT NULL
+);
