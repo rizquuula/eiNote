@@ -1,5 +1,4 @@
 export const THEME_KEY = "theme"
-export const NOTEBOOK_KEY = "notebook"
 
 export const WebTheme = Object.freeze({
   DARK: 'dark',

@@ -1,21 +1,23 @@
 class NotePreview {
 
-  Title: string;
-  Description: string;
-  Timestamp: Date;
-  IsActive: boolean;
+  ID: string
+  Title: string
+  Content: string
+  ContentPreview: string
+  Timestamp: Date
+  IsActive: boolean
 
-  constructor(title: string, description: string, timestamp: Date) {
+  constructor(id: string, title: string, content: string, timestamp: Date) {
+    this.ID = id
     this.Title = title
-    this.Description = description
+    this.Content = content
+    this.ContentPreview = this.trim(content, 0, 95)
     this.Timestamp = timestamp
     this.IsActive = false
-
-    this.trimDescription()
   }
 
-  trimDescription(): void {
-    this.Description = this.Description.slice(0, 95) + "..."
+  trim(content: string, start: number, end: number): string {
+    return content.slice(start, end) + "..."
   }
 
   SetActive(isActive: boolean): void {
@@ -28,6 +30,11 @@ class NotePreview {
 
   GetTime(): string {
     return this.Timestamp.getHours() + ":" + this.Timestamp.getMinutes() + ":" + this.Timestamp.getSeconds()
+  }
+
+  UpdateContent(newContent: string): void {
+    this.Content = newContent
+    this.ContentPreview = this.trim(newContent, 0, 95)
   }
 }
 

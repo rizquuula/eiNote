@@ -1,13 +1,27 @@
-import { NotePreviewMock } from "../../test/mock/note.preview.mock";
+import NotePreview from "../../models/note.preview";
 import Note from "./note";
 
-function NoteList() {
+interface NoteListProps {
+  notes: NotePreview[]
+  activeNote: NotePreview | null
+  SetActiveNote(note: NotePreview): void
+}
+
+function NoteList({ notes, activeNote, SetActiveNote }: NoteListProps) {
 
   return (
     <div className='flex flex-col gap-2'>
-      {NotePreviewMock.map((data, i) => {
-        return <Note key={i} data={data} />
+      {notes.map((data, i) => {
+        const isActive = data.ID === (
+          activeNote
+            ? activeNote.ID
+            : notes.length > 0
+              ? notes[0].ID
+              : null
+        )
+        return <Note key={i} data={data} onClick={SetActiveNote} isActive={isActive} />
       })}
+
     </div>
   )
 }

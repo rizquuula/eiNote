@@ -10,7 +10,7 @@ class NotebookAPI {
     this.UseMock = mock
   }
 
-  async ReadNotebook(): Promise<NotebookPreview[]> {
+  async ReadNotebooks(): Promise<NotebookPreview[]> {
     if (this.UseMock) {
       return NotebookPreviewMock
     }
@@ -19,11 +19,12 @@ class NotebookAPI {
       method: "GET",
     };
 
-    const response = await fetch(this.Host + "/v1/notebooks", requestOptions);
+    const url = this.Host + "/v1/notebooks"
+    const response = await fetch(url, requestOptions);
 
     // Check if the response is OK (status in the range 200-299)
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      throw new Error(`HTTP error! url: ${url}, status: ${response.status}`);
     }
 
     const result = await response.json();

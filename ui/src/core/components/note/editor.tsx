@@ -4,15 +4,20 @@ import EasyMDE from "easymde";
 import "easymde/dist/easymde.min.css";
 import "./editor.darktheme.css";
 import "./editor.preview.css";
+import NotePreview from "../../models/note.preview";
 
+interface NoteEditorProps {
+  note: NotePreview | null
+  SaveNote(note: NotePreview): void
+}
 
-export default function NoteEditor() {
+export default function NoteEditor({ note, SaveNote }: NoteEditorProps) {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const easyMdeRef = useRef<EasyMDE | null>(null);
 
   useEffect(() => {
-
+    const saveDelay = 5000
     if (!textareaRef.current) {
       throw new Error("Textarea ref not found.")
     }
@@ -24,8 +29,7 @@ export default function NoteEditor() {
         autosave: {
           enabled: true,
           uniqueId: "tmpNote",
-          delay: 1000,
-          submit_delay: 0,
+          delay: saveDelay,
           timeFormat: {
             locale: 'en-US',
             format: {
@@ -34,6 +38,7 @@ export default function NoteEditor() {
               day: '2-digit',
               hour: '2-digit',
               minute: '2-digit',
+              second: '2-digit',
             },
           },
           text: "Autosaved: "
@@ -50,9 +55,20 @@ export default function NoteEditor() {
         maxHeight: window.innerHeight * 0.75 + "px",
         scrollbarStyle: "native",
       });
+
+      setInterval(() => {
+        if (note !== null && easyMdeRef.current !== null) {
+          note.UpdateContent(easyMdeRef.current.value())
+          SaveNote(note)
+        }
+      }, saveDelay)
+
+    } else {
+      const content = note ? note.Content : ""
+      easyMdeRef.current.value(content);
     }
 
-  }, [])
+  }, [note, SaveNote])
 
   return <textarea title="editor" className="note-editor" ref={textareaRef} />
 }

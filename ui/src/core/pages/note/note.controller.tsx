@@ -2,47 +2,48 @@ import { useEffect, useState } from "react";
 import NotebookAPI from "../../api/notebook"
 import NoteView from "./note.view"
 import NotebookPreview from "../../models/notebook.preview";
-import { NOTEBOOK_KEY } from "../../models/config";
+import NoteAPI from "../../api/note";
+import NotePreview from "../../models/note.preview";
 
-function checkActiveNotebook(notebooks: NotebookPreview[]): NotebookPreview[] {
-  const key = localStorage.getItem(NOTEBOOK_KEY)
-  if (key) {
-    for (let n of notebooks) {
-      if (n.ID === key) {
-        n.SetActive(true)
-        return notebooks
-      }
-    }
-  }
 
-  // if note with key in localStorage not found, mark the first item in notebooks as active
-  if (notebooks.length > 0) {
-    notebooks[0].SetActive(true)
-    localStorage.setItem(NOTEBOOK_KEY, notebooks[0].ID)
-  }
-  return notebooks
-}
-
-function NoteController({ notebookApi }: { notebookApi: NotebookAPI }) {
+function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, noteApi: NoteAPI }) {
   const [notebooks, setNotebooks] = useState<NotebookPreview[]>([]);
+  const [activeNotebook, setActiveNotebook] = useState<NotebookPreview | null>(null);
+
+  const [notes, setNotes] = useState<NotePreview[]>([]);
+  const [activeNote, setActiveNote] = useState<NotePreview | null>(null);
+
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchNotebooks = async () => {
+    const fetchData = async () => {
       try {
-        let data = await notebookApi.ReadNotebook();
-        data = checkActiveNotebook(data)
-        setNotebooks(data);
+        let notebooksPreview = await notebookApi.ReadNotebooks();
+        if (activeNotebook == null && notebooksPreview.length > 0) {
+          setActiveNotebook(notebooksPreview[0])
+        }
+        setNotebooks(notebooksPreview);
+
+        let notesPreview = await noteApi.ReadNotes(activeNotebook);
+        if (activeNote == null && notesPreview.length > 0) {
+          setActiveNote(notesPreview[0])
+        }
+        setNotes(notesPreview)
       } catch (err) {
-        setError("Failed to fetch notebooks.");
+        setError(`Failed to fetch data. ${err}`);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchNotebooks();
-  }, [notebookApi]);
+    fetchData();
+  }, [notebookApi, noteApi, activeNotebook, activeNote]);
+
+  const saveNote = async (note: NotePreview) => {
+    await noteApi.SaveNote(note)
+    setActiveNote(note)
+  }
 
   if (loading) {
     return <div>Loading...</div>;
@@ -52,7 +53,15 @@ function NoteController({ notebookApi }: { notebookApi: NotebookAPI }) {
     return <div>{error}</div>;
   }
 
-  return <NoteView notebooks={notebooks} />;
+  return <NoteView
+    notebooks={notebooks}
+    activeNotebook={activeNotebook}
+    SetActiveNotebook={setActiveNotebook}
+    notes={notes}
+    activeNote={activeNote}
+    SetActiveNote={setActiveNote}
+    SaveNote={saveNote}
+  />;
 }
 
 export default NoteController

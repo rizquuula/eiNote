@@ -3,8 +3,11 @@ package mock
 import (
 	"stub/internal/domain/model/note"
 	"time"
+
+	"github.com/google/uuid"
 )
 
+var titleOne = "A demo of `react-markdown`"
 var contentOne = "# A demo of `react-markdown`\n\n" +
 	"`react-markdown` is a markdown component for React.\n\n" +
 	"👉 Changes are re-rendered as you type.\n" +
@@ -12,6 +15,7 @@ var contentOne = "# A demo of `react-markdown`\n\n" +
 	"👈 Try writing some markdown on the left.\n\n" +
 	"> hmm?"
 
+var titleTwo = "Second Demo"
 var contentTwo = "# Second Demo\n\n" +
 	"## Overview\n\n" +
 	"* Follows [CommonMark](https://commonmark.org)\n" +
@@ -20,6 +24,7 @@ var contentTwo = "# Second Demo\n\n" +
 	"* Lets you define your own components (to render `MyHeading` instead of `'h1'`)\n" +
 	"* Has a lot of plugins\n"
 
+var titleThree = "Third Demo"
 var contentThree = "# Third Demo\n\n" +
 	"## Syntax highlighting\n\n" +
 
@@ -43,6 +48,8 @@ var contentThree = "# Third Demo\n\n" +
 	"```\n"
 
 var NoteMock = note.Note{
+	ID:        uuid.New(),
+	Title:     titleOne,
 	Content:   contentOne,
 	UpdatedAt: time.Now(),
 }
@@ -50,14 +57,20 @@ var NoteMock = note.Note{
 var NotesMock = note.Notes{
 	Notes: []note.Note{
 		{
+			ID:        uuid.New(),
+			Title:     titleOne,
 			Content:   contentOne,
 			UpdatedAt: time.Now().Add(time.Hour * -3),
 		},
 		{
+			ID:        uuid.New(),
+			Title:     titleTwo,
 			Content:   contentTwo,
 			UpdatedAt: time.Now().Add(time.Minute * -31),
 		},
 		{
+			ID:        uuid.New(),
+			Title:     titleThree,
 			Content:   contentThree,
 			UpdatedAt: time.Now(),
 		},

@@ -14,23 +14,11 @@ type noteController struct {
 	noteService noteservice.NoteService
 }
 
-func (n *noteController) ReadNote(w http.ResponseWriter, r *http.Request) {
-	userId := "test-user"
-	queryParams := r.URL.Query()
-	noteId := queryParams.Get("id")
-
-	if noteId == "" {
-		rest.NewBusinessError(w, errorcode.RequestParsingError, http.StatusUnprocessableEntity)
-		return
-	}
-
-	noteResult, _ := n.noteService.ReadNote(r.Context(), noteId, userId)
-	rest.NewResponse(w, noteResult)
-}
-
 func (n *noteController) ReadNotes(w http.ResponseWriter, r *http.Request) {
 	userId := "test-user"
-	notesResult, _ := n.noteService.ReadNotes(r.Context(), userId)
+	queryParams := r.URL.Query()
+	notebookId := queryParams.Get("notebook")
+	notesResult, _ := n.noteService.ReadNotes(r.Context(), notebookId, userId)
 	rest.NewResponse(w, notesResult)
 }
 
@@ -42,7 +30,7 @@ func (n *noteController) WriteNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if note.Content == "" {
+	if note.ID.String() == "" || note.Content == "" {
 		rest.NewBusinessError(w, errorcode.SanitizeError, http.StatusUnprocessableEntity)
 		return
 	}

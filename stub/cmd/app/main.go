@@ -35,7 +35,6 @@ func main() {
 
 	r := mux.NewRouter()
 	v1 := r.PathPrefix("/v1").Subrouter()
-	v1.HandleFunc("/note", noteController.ReadNote).Methods("GET")
 	v1.HandleFunc("/note", noteController.WriteNote).Methods("POST")
 	v1.HandleFunc("/notes", noteController.ReadNotes).Methods("GET")
 	v1.HandleFunc("/notebooks", notebookConteroller.ReadNotebooks).Methods("GET")
