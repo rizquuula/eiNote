@@ -46,10 +46,16 @@ func NewResponse(w http.ResponseWriter, message string, data interface{}) {
 
 func NewResponseError(w http.ResponseWriter, err error) {
 	if customErr, ok := err.(*customerror.CustomError); ok {
+		var message string
+		if customErr.Message != "" {
+			message = customErr.Message
+		} else {
+			message = customErr.Error()
+		}
 		resp := Response{
 			Status:  responsestatus.SystemError,
 			Code:    customErr.Code,
-			Message: customErr.Message,
+			Message: message,
 		}
 
 		w.Header().Set("Content-Type", "application/json")

@@ -14,7 +14,7 @@ type CustomError struct {
 }
 
 func (e *CustomError) Error() string {
-	return fmt.Sprintf("Business error on field '%s': %s - %s - %v", e.Field, e.Code.String(), e.Message, e.Err)
+	return fmt.Sprintf("Custom error on field '%s': %s - %s - %v", e.Field, e.Code.String(), e.Message, e.Err)
 }
 
 type Opts struct {

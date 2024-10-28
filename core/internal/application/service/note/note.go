@@ -14,6 +14,8 @@ type NoteService struct {
 // WriteNote implements note.NoteService.
 func (n *NoteService) WriteNote(ctx context.Context, note note.Note) (note.Note, error) {
 	note, err := n.noteRepository.UpSertNote(ctx, note)
+	note.GetTitle()
+
 	return note, err
 }
 

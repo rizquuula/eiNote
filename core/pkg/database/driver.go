@@ -22,7 +22,6 @@ func (d Driver) NewPostgresConn() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 
 	// Check if the connection is alive
 	if err := db.Ping(); err != nil {

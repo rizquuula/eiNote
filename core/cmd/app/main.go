@@ -37,9 +37,12 @@ func main() {
 		Host:         os.Getenv("DB_HOST"),
 		Port:         os.Getenv("DB_PORT"),
 	}.NewPostgresConn()
+
 	if err != nil {
 		log.Fatalf("Error db connection: %v", err)
 	}
+
+	defer db.Close()
 
 	noteRepository := noterepository.New(db)
 	notebookRepository := notebookrepository.New(db)

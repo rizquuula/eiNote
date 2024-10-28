@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS note (
     id VARCHAR PRIMARY KEY,
+    notebook_id VARCHAR NOT NULL,
     content TEXT NOT NULL,
     updated_at TIMESTAMP NOT NULL
 );

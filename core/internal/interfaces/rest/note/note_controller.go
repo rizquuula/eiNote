@@ -43,12 +43,13 @@ func (n *noteController) WriteNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	note, err = n.noteService.WriteNote(r.Context(), note)
+	newNote, err := n.noteService.WriteNote(r.Context(), note)
+
 	if err != nil {
 		httpresponse.NewResponseError(w, err)
 		return
 	}
-	httpresponse.NewResponse(w, "Success Write Note", note)
+	httpresponse.NewResponse(w, "Success Write Note", newNote)
 }
 
 func New(
