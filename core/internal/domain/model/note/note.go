@@ -16,6 +16,36 @@ type Note struct {
 	UpdatedAt  time.Time `json:"updated_at"`
 }
 
+func (n *Note) IdFromStr(id string) error {
+	if id == "" {
+		n.ID = uuid.Nil
+		return nil
+	}
+
+	idUuid, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+
+	n.ID = idUuid
+	return nil
+}
+
+func (n *Note) NotebookIdFromStr(id string) error {
+	if id == "" {
+		n.NotebookId = uuid.Nil
+		return nil
+	}
+
+	idUuid, err := uuid.Parse(id)
+	if err != nil {
+		return err
+	}
+
+	n.NotebookId = idUuid
+	return nil
+}
+
 func (n *Note) GetID() uuid.UUID {
 	if n.ID == uuid.Nil {
 		n.ID = uuid.New()
@@ -33,7 +63,7 @@ func (n *Note) GetUpdatedAt() time.Time {
 func (n *Note) GetTitle() string {
 	if n.Title == "" {
 		titleCandidate := strings.Split(n.Content, "\n")[0]
-		cleanTitle := strings.Replace(titleCandidate, "#", "", -1)
+		cleanTitle := strings.Replace(titleCandidate, "#", "", 1)
 		trimmedTitle := strings.TrimSpace(cleanTitle)
 		n.Title = trimmedTitle
 	}
