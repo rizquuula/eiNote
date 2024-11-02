@@ -9,5 +9,5 @@ CREATE TABLE IF NOT EXISTS note (
     notebook_id VARCHAR NOT NULL,
     content TEXT NOT NULL,
     updated_at TIMESTAMP NOT NULL,
-    FOREIGN KEY (notebook_id) REFERENCES notebook(id)
+    FOREIGN KEY (notebook_id) REFERENCES notebook(id) ON DELETE CASCADE
 );

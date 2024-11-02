@@ -44,6 +44,7 @@ class NoteAPI {
       notebooks.push(
         new NotePreview(
           n["id"],
+          n["notebook_id"],
           n["title"],
           n["content"],
           parsedDate,
@@ -53,13 +54,14 @@ class NoteAPI {
     return notebooks;
   }
 
-  async CreateNote(note: NotePreview): Promise<void> {
+  async CreateNote(note: NotePreview): Promise<NotePreview> {
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
     const raw = JSON.stringify({
       "id": note.ID,
+      "notebook_id": note.NotebookID,
       "content": note.Content,
     });
 
@@ -77,6 +79,17 @@ class NoteAPI {
     if (!response.ok) {
       throw new Error(`HTTP error! url: ${url}, status: ${response.status}`);
     }
+
+    const result = await response.json();
+    const data = result["data"];
+
+    return new NotePreview(
+      data["id"],
+      data["notebook_id"],
+      data["title"],
+      data["content"],
+      new Date(data['updated_at']),
+    )
   }
 
   async DeleteNot(note: NotePreview): Promise<void> {

@@ -11,7 +11,7 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
   const [activeNotebook, setActiveNotebook] = useState<NotebookPreview | null>(null);
 
   const [notes, setNotes] = useState<NotePreview[]>([]);
-  const [activeNote, setActiveNote] = useState<NotePreview | null>(null);
+  const [activeNote, setActiveNote] = useState<NotePreview | null>();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,24 +45,33 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
   }, [notebookApi, noteApi, activeNotebook, activeNote]);
 
   const saveNote = async (note: NotePreview) => {
-    await noteApi.CreateNote(note)
-    setActiveNote(note)
+    const newNote = await noteApi.CreateNote(note)
+    setNotes([...notes, newNote])
+    setActiveNote(newNote)
   }
 
   const createNotebook = async (name: string) => {
     const newNotebook = await notebookApi.CreateNotebook(new NotebookPreview("", name, null))
     setNotebooks([...notebooks, newNotebook])
+    if (!activeNotebook)
+      setActiveNotebook(newNotebook)
   }
 
   const deleteNotebook = async (notebook: NotebookPreview) => {
     await notebookApi.DeleteNotebook(notebook)
-    let currNotebooks = []
-    for (let n of notebooks) {
-      if (n.ID !== notebook.ID) {
-        currNotebooks.push(n)
+    window.location.reload()
+  }
+
+  const getActiveNote = (): NotePreview | null => {
+    if (activeNote) {
+      return activeNote
+    } else {
+      if (activeNotebook && activeNotebook.ID) {
+        return new NotePreview("", activeNotebook.ID, "", "", new Date())
+      } else {
+        return null
       }
     }
-    setNotebooks(currNotebooks)
   }
 
   if (loading) {
@@ -79,7 +88,7 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
     setActiveNotebook={setActiveNotebook}
     createNotebook={createNotebook}
     notes={notes}
-    activeNote={activeNote}
+    activeNote={getActiveNote()}
     setActiveNote={setActiveNote}
     saveNote={saveNote}
     deleteNotebook={deleteNotebook}

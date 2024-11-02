@@ -44,11 +44,6 @@ func (n *noteController) WriteNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if requestBody.Content == "" {
-		httpresponse.NewResponseError(w, err)
-		return
-	}
-
 	requestNote := note.Note{
 		Content: requestBody.Content,
 	}

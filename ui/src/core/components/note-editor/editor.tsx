@@ -7,11 +7,12 @@ import "./editor.preview.css";
 import NotePreview from "../../models/note.preview";
 
 interface NoteEditorProps {
+  notebookId: string | null
   note: NotePreview | null
-  SaveNote(note: NotePreview): void
+  saveNote(note: NotePreview): void
 }
 
-export default function NoteEditor({ note, SaveNote }: NoteEditorProps) {
+export default function NoteEditor({ notebookId, note, saveNote }: NoteEditorProps) {
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const easyMdeRef = useRef<EasyMDE | null>(null);
@@ -56,19 +57,31 @@ export default function NoteEditor({ note, SaveNote }: NoteEditorProps) {
         scrollbarStyle: "native",
       });
 
-      setInterval(() => {
-        if (note !== null && easyMdeRef.current !== null) {
-          note.UpdateContent(easyMdeRef.current.value())
-          SaveNote(note)
-        }
-      }, saveDelay)
-
     } else {
       const content = note ? note.Content : ""
       easyMdeRef.current.value(content);
     }
 
-  }, [note, SaveNote])
+    // Set up the interval
+    const intervalId = setInterval(() => {
+
+      if (easyMdeRef.current !== null) {
+        const newContent = easyMdeRef.current.value();
+        if (note === null) {
+          if (notebookId) {
+            saveNote(new NotePreview("", notebookId, "", newContent, new Date()));
+          }
+        } else {
+          note.UpdateContent(newContent);
+          saveNote(note);
+        }
+      }
+    }, saveDelay);
+
+    // clear interval on unmount
+    return () => clearInterval(intervalId);
+
+  }, [note, notebookId, saveNote])
 
   return <textarea title="editor" className="note-editor" ref={textareaRef} />
 }

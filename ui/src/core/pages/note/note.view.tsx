@@ -29,14 +29,14 @@ function NoteView({
   notes,
   activeNote,
   setActiveNote: SetActiveNote,
-  saveNote: SaveNote,
+  saveNote,
 }: NoteViewProps) {
+
   return <div className='flex flex-row gap-4'>
     <div id='note.sidebar' className='w-2/12 flex flex-col gap-8'>
       <div id='note' className="flex flex-col gap-2">
         <p className="font-semibold text-main-normal">My Notes</p>
         <NoteList notes={notes} activeNote={activeNote} SetActiveNote={SetActiveNote} />
-        <CreateNoteBtn />
       </div>
       <div id='notebook' className="flex flex-col gap-2">
         <p className="font-semibold text-main-normal">My Notebooks</p>
@@ -51,7 +51,7 @@ function NoteView({
     </div>
     <div id='note.editor' className='flex flex-col gap-2 w-10/12'>
       <p className="font-semibold text-main-normal">Note Editor</p>
-      <NoteEditor note={activeNote} SaveNote={SaveNote} />
+      <NoteEditor note={activeNote} notebookId={activeNotebook ? activeNotebook.ID : null} saveNote={saveNote} />
     </div>
   </div>
 }

@@ -1,14 +1,16 @@
 class NotePreview {
 
   ID: string
+  NotebookID: string
   Title: string
   Content: string
   ContentPreview: string
   Timestamp: Date
   IsActive: boolean
 
-  constructor(id: string, title: string, content: string, timestamp: Date) {
+  constructor(id: string, notebookId: string, title: string, content: string, timestamp: Date) {
     this.ID = id
+    this.NotebookID = notebookId
     this.Title = title
     this.Content = content
     this.ContentPreview = this.trim(content, 0, 95)
