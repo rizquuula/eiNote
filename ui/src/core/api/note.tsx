@@ -21,7 +21,7 @@ class NoteAPI {
     };
 
     const queryParams = {
-      notebook: notebook ? notebook.ID : "",
+      notebook_id: notebook ? notebook.ID : "",
     };
 
     const url = new URL(this.Host + "/v1/notes");
@@ -53,7 +53,7 @@ class NoteAPI {
     return notebooks;
   }
 
-  async SaveNote(note: NotePreview): Promise<void> {
+  async CreateNote(note: NotePreview): Promise<void> {
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
@@ -70,6 +70,26 @@ class NoteAPI {
     };
 
     const url = new URL(this.Host + "/v1/note");
+
+    const response = await fetch(url, requestOptions);
+
+    // Check if the response is OK (status in the range 200-299)
+    if (!response.ok) {
+      throw new Error(`HTTP error! url: ${url}, status: ${response.status}`);
+    }
+  }
+
+  async DeleteNot(note: NotePreview): Promise<void> {
+    const requestOptions = {
+      method: "DELETE",
+    };
+
+    const queryParams = {
+      note_id: note ? note.ID : "",
+    };
+
+    const url = new URL(this.Host + "/v1/note");
+    url.search = new URLSearchParams(queryParams).toString();
 
     const response = await fetch(url, requestOptions);
 

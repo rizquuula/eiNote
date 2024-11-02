@@ -7,6 +7,7 @@ import (
 	"core/pkg/errorcode"
 	"core/pkg/httpresponse"
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -27,6 +28,14 @@ func (n *notebookController) WriteNotebook(w http.ResponseWriter, r *http.Reques
 	var requestBody struct {
 		NotebookId string `json:"id"`
 		Name       string `json:"name"`
+	}
+
+	if r.Body == http.NoBody {
+		err := customerror.NewBusinessError(fmt.Errorf("json body is required"), customerror.Opts{
+			Code: errorcode.RequestParsingError,
+		})
+		httpresponse.NewResponseError(w, err)
+		return
 	}
 
 	err := json.NewDecoder(r.Body).Decode(&requestBody)

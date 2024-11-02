@@ -12,6 +12,10 @@ module.exports = {
         'h6': ['0.875rem', { lineHeight: '1.25rem' }],
       },
       colors: {
+        light: {
+          normal: '#e4e4e7', // zinc-200
+          hover: '#d4d4d8', // zinc-300
+        },
         main: {
           normal: '#10B981', // emerald-500
           hover: '#059669', // emerald-600

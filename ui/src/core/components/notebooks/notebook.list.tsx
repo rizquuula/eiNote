@@ -4,10 +4,16 @@ import Notebook from './notebook';
 interface NotebookListProps {
   notebooks: NotebookPreview[]
   activeNotebook: NotebookPreview | null
-  SetActiveNotebook(notebook: NotebookPreview): void
+  setActiveNotebook(notebook: NotebookPreview): void
+  deleteNotebook(notebook: NotebookPreview): void
 }
 
-function NotebookList({ notebooks, activeNotebook, SetActiveNotebook }: NotebookListProps) {
+function NotebookList({
+  notebooks,
+  activeNotebook,
+  setActiveNotebook,
+  deleteNotebook,
+}: NotebookListProps) {
 
   return (
     <div className='flex flex-col gap-2'>
@@ -19,7 +25,13 @@ function NotebookList({ notebooks, activeNotebook, SetActiveNotebook }: Notebook
               ? notebooks[0].ID
               : null
         )
-        return <Notebook key={i} data={data} onClick={SetActiveNotebook} isActive={isActive} />
+        return <Notebook
+          key={i}
+          data={data}
+          setActiveNotebook={setActiveNotebook}
+          isActive={isActive}
+          deleteNotebook={deleteNotebook}
+        />
       })}
     </div>
   )

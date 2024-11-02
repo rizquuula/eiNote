@@ -37,6 +37,10 @@ func (n *NoteService) WriteNote(ctx context.Context, note note.Note) (note.Note,
 
 // ReadNotes implements note.NoteService.
 func (n *NoteService) ReadNotes(ctx context.Context, notebookId string) (note.Notes, error) {
+	if notebookId == "" {
+		return note.Notes{}, nil
+	}
+
 	notebookUUID, err := uuid.Parse(notebookId)
 	if err != nil {
 		err = customerror.NewBusinessError(fmt.Errorf("error to parse notebook id: %v", err), customerror.Opts{Code: errorcode.RequestParsingError})

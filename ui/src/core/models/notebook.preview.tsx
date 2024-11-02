@@ -1,12 +1,14 @@
 class NotebookPreview {
   ID: string
-  Title: string
+  Name: string
   IsActive: boolean
+  UpdatedAt: Date | null
 
-  constructor(id: string, title: string) {
+  constructor(id: string, name: string, updatedAt: Date | null) {
     this.ID = id
-    this.Title = title
+    this.Name = name
     this.IsActive = false
+    this.UpdatedAt = updatedAt
   }
 
   SetActive(isActive: boolean): void {

@@ -19,16 +19,20 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
   useEffect(() => {
     const fetchData = async () => {
       try {
-        let notebooksPreview = await notebookApi.ReadNotebooks();
+        const notebooksPreview = await notebookApi.ReadNotebooks();
+
         if (activeNotebook == null && notebooksPreview.length > 0) {
           setActiveNotebook(notebooksPreview[0])
         }
+
         setNotebooks(notebooksPreview);
 
-        let notesPreview = await noteApi.ReadNotes(activeNotebook);
+        const notesPreview = await noteApi.ReadNotes(activeNotebook);
+
         if (activeNote == null && notesPreview.length > 0) {
           setActiveNote(notesPreview[0])
         }
+
         setNotes(notesPreview)
       } catch (err) {
         setError(`Failed to fetch data. ${err}`);
@@ -41,8 +45,24 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
   }, [notebookApi, noteApi, activeNotebook, activeNote]);
 
   const saveNote = async (note: NotePreview) => {
-    await noteApi.SaveNote(note)
+    await noteApi.CreateNote(note)
     setActiveNote(note)
+  }
+
+  const createNotebook = async (name: string) => {
+    const newNotebook = await notebookApi.CreateNotebook(new NotebookPreview("", name, null))
+    setNotebooks([...notebooks, newNotebook])
+  }
+
+  const deleteNotebook = async (notebook: NotebookPreview) => {
+    await notebookApi.DeleteNotebook(notebook)
+    let currNotebooks = []
+    for (let n of notebooks) {
+      if (n.ID !== notebook.ID) {
+        currNotebooks.push(n)
+      }
+    }
+    setNotebooks(currNotebooks)
   }
 
   if (loading) {
@@ -56,11 +76,13 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
   return <NoteView
     notebooks={notebooks}
     activeNotebook={activeNotebook}
-    SetActiveNotebook={setActiveNotebook}
+    setActiveNotebook={setActiveNotebook}
+    createNotebook={createNotebook}
     notes={notes}
     activeNote={activeNote}
-    SetActiveNote={setActiveNote}
-    SaveNote={saveNote}
+    setActiveNote={setActiveNote}
+    saveNote={saveNote}
+    deleteNotebook={deleteNotebook}
   />;
 }
 

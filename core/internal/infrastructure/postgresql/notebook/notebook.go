@@ -58,7 +58,7 @@ func (n *NotebookRepository) UpSertNotebook(ctx context.Context, aNotebook noteb
 
 	query := n.queryBuilder.Insert(n.table).
 		Columns(notebookCols...).
-		Values(aNotebook.ID.String(), aNotebook.Title, aNotebook.GetUpdatedAt().Format(time.RFC3339)).
+		Values(aNotebook.ID.String(), aNotebook.Name, aNotebook.GetUpdatedAt().Format(time.RFC3339)).
 		Suffix("ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, updated_at = EXCLUDED.updated_at")
 
 	sql, args, err := query.ToSql()
@@ -115,7 +115,7 @@ func (n *NotebookRepository) ReadNotebooks(ctx context.Context) (notebook.Notebo
 
 		aNotebook := notebook.Notebook{
 			ID:        uuidNotebookId,
-			Title:     tmpTitle,
+			Name:      tmpTitle,
 			UpdatedAt: timeUpdatedAt,
 		}
 		notebooks.Notebooks = append(notebooks.Notebooks, aNotebook)

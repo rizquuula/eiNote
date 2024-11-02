@@ -21,7 +21,6 @@ func (e *CustomError) Error() string {
 
 type Opts struct {
 	Code    errorcode.ErrorCode
-	Field   string
 	Message string
 }
 

@@ -9,7 +9,7 @@ import (
 
 type Notebook struct {
 	ID        uuid.UUID
-	Title     string
+	Name      string
 	UpdatedAt time.Time
 }
 
@@ -40,17 +40,17 @@ func (n *Notebook) NotebookIdFromStr(id string) error {
 }
 
 func (n *Notebook) SetName(aName string) {
-	n.Title = aName
+	n.Name = aName
 }
 
 func (n Notebook) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		ID        string `json:"id"`
-		Name      string `json:"title"`
+		Name      string `json:"name"`
 		UpdatedAt string `json:"updated_at"`
 	}{
 		ID:        n.ID.String(),
-		Name:      n.Title,
+		Name:      n.Name,
 		UpdatedAt: n.UpdatedAt.Format(time.RFC3339),
 	})
 }
