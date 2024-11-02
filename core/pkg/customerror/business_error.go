@@ -9,12 +9,14 @@ type CustomError struct {
 	Err           error
 	IsBusinessErr bool
 	Code          errorcode.ErrorCode
-	Field         string
 	Message       string
 }
 
 func (e *CustomError) Error() string {
-	return fmt.Sprintf("Custom error on field '%s': %s - %s - %v", e.Field, e.Code.String(), e.Message, e.Err)
+	if e.Message == "" {
+		return fmt.Sprintf("%v", e.Err)
+	}
+	return fmt.Sprintf("%s - %v", e.Message, e.Err)
 }
 
 type Opts struct {
@@ -34,7 +36,6 @@ func NewBusinessError(err error, opts ...Opts) error {
 		Err:           err,
 		IsBusinessErr: true,
 		Code:          defaultOpts.Code,
-		Field:         defaultOpts.Field,
 		Message:       defaultOpts.Message,
 	}
 }
@@ -50,7 +51,6 @@ func NewSystemError(err error, opts ...Opts) error {
 		Err:           err,
 		IsBusinessErr: false,
 		Code:          defaultOpts.Code,
-		Field:         defaultOpts.Field,
 		Message:       defaultOpts.Message,
 	}
 }

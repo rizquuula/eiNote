@@ -17,7 +17,7 @@ type noteController struct {
 
 func (n *noteController) ReadNotes(w http.ResponseWriter, r *http.Request) {
 	queryParams := r.URL.Query()
-	notebookId := queryParams.Get("notebook")
+	notebookId := queryParams.Get("notebook_id")
 	notesResult, err := n.noteService.ReadNotes(r.Context(), notebookId)
 	if err != nil {
 		httpresponse.NewResponseError(w, err)
@@ -72,6 +72,17 @@ func (n *noteController) WriteNote(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	httpresponse.NewResponse(w, "Success Write Note", newNote)
+}
+
+func (n *noteController) DeleteNote(w http.ResponseWriter, r *http.Request) {
+	queryParams := r.URL.Query()
+	noteId := queryParams.Get("note_id")
+	err := n.noteService.DeleteNote(r.Context(), noteId)
+	if err != nil {
+		httpresponse.NewResponseError(w, err)
+		return
+	}
+	httpresponse.NewResponse(w, "Success Delete Note", nil)
 }
 
 func New(

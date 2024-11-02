@@ -9,6 +9,7 @@ const (
 	SanitizeError
 	DatabaseError
 	SystemError
+	NotFoundError
 )
 
 func (r ErrorCode) String() string {
@@ -23,6 +24,8 @@ func (r ErrorCode) String() string {
 		return "D001"
 	case SystemError:
 		return "S002"
+	case NotFoundError:
+		return "N001"
 	default:
 		return "E000"
 	}

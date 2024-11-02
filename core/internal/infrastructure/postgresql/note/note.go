@@ -12,19 +12,49 @@ import (
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
+	"github.com/lib/pq" // PostgreSQL driver
 )
 
 type NoteRepository struct {
 	db           *sql.DB
 	queryBuilder sq.StatementBuilderType
+	table        string
+}
+
+// DeleteNotes implements note.NoteRepository.
+func (n *NoteRepository) DeleteNote(ctx context.Context, noteId uuid.UUID) error {
+	query := n.queryBuilder.Delete(n.table).Where(sq.Eq{"id": noteId.String()})
+	sql, args, err := query.ToSql()
+	if err != nil {
+		err = customerror.NewSystemError(fmt.Errorf("fail to build sql: %v", err), customerror.Opts{Code: errorcode.DatabaseError})
+		return err
+	}
+
+	result, err := n.db.Exec(sql, args...)
+	if err != nil {
+		err = customerror.NewSystemError(fmt.Errorf("error executing sql: %v", err), customerror.Opts{Code: errorcode.DatabaseError})
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		err = customerror.NewSystemError(fmt.Errorf("error fetching rows affected: %v", err), customerror.Opts{Code: errorcode.DatabaseError})
+		return err
+	}
+
+	if rowsAffected == 0 {
+		err = customerror.NewBusinessError(fmt.Errorf("no row found with the specified ID: %s", noteId.String()), customerror.Opts{Code: errorcode.NotFoundError})
+		return err
+	}
+	return nil
 }
 
 // ReadNotes implements note.NoteRepository.
-func (n *NoteRepository) ReadNotes(ctx context.Context, notebookId string) (note.Notes, error) {
+func (n *NoteRepository) ReadNotes(ctx context.Context, notebookId uuid.UUID) (note.Notes, error) {
 
 	query := n.queryBuilder.Select("id", "notebook_id", "content", "updated_at").
-		From("note").
-		Where(sq.Eq{"notebook_id": notebookId})
+		From(n.table).
+		Where(sq.Eq{"notebook_id": notebookId.String()})
 
 	sql, args, err := query.ToSql()
 	if err != nil {
@@ -82,7 +112,7 @@ func (n *NoteRepository) ReadNotes(ctx context.Context, notebookId string) (note
 // WriteNote implements note.NoteRepository.
 func (n *NoteRepository) UpSertNote(ctx context.Context, aNote note.Note) (note.Note, error) {
 
-	query := n.queryBuilder.Insert("note").
+	query := n.queryBuilder.Insert(n.table).
 		Columns("id", "notebook_id", "content", "updated_at").
 		Values(aNote.GetID().String(), aNote.NotebookId.String(), aNote.Content, aNote.GetUpdatedAt().Format(time.RFC3339)).
 		Suffix("ON CONFLICT (id) DO UPDATE SET content = EXCLUDED.content, updated_at = EXCLUDED.updated_at")
@@ -95,6 +125,11 @@ func (n *NoteRepository) UpSertNote(ctx context.Context, aNote note.Note) (note.
 
 	_, err = n.db.Exec(sql, args...)
 	if err != nil {
+		if pqErr, ok := err.(*pq.Error); ok && pqErr.Code == "23503" {
+			err = customerror.NewBusinessError(fmt.Errorf("notebook_id not found"), customerror.Opts{Code: errorcode.NotFoundError})
+			return note.Note{}, err
+		}
+
 		err = customerror.NewSystemError(fmt.Errorf("error executing sql: %v", err), customerror.Opts{Code: errorcode.DatabaseError})
 		return note.Note{}, err
 	}
@@ -104,9 +139,11 @@ func (n *NoteRepository) UpSertNote(ctx context.Context, aNote note.Note) (note.
 
 func New(
 	db *sql.DB,
+	table string,
 ) noterepository.NoteRepository {
 	return &NoteRepository{
 		db:           db,
 		queryBuilder: sq.StatementBuilder.PlaceholderFormat(sq.Dollar),
+		table:        table,
 	}
 }

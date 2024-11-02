@@ -46,23 +46,29 @@ func NewResponse(w http.ResponseWriter, message string, data interface{}) {
 
 func NewResponseError(w http.ResponseWriter, err error) {
 	if customErr, ok := err.(*customerror.CustomError); ok {
+		w.Header().Set("Content-Type", "application/json")
+
 		var message string
 		if customErr.Message != "" {
 			message = customErr.Message
 		} else {
 			message = customErr.Error()
 		}
+
 		resp := Response{
 			Status:  responsestatus.SystemError,
 			Code:    customErr.Code,
 			Message: message,
 		}
 
-		w.Header().Set("Content-Type", "application/json")
-
 		if customErr.IsBusinessErr {
 			resp.Status = responsestatus.BusinessError
-			w.WriteHeader(http.StatusBadRequest)
+
+			if resp.Code == errorcode.NotFoundError {
+				w.WriteHeader(http.StatusNotFound)
+			} else {
+				w.WriteHeader(http.StatusBadRequest)
+			}
 		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 		}

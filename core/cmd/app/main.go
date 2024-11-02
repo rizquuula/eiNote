@@ -3,6 +3,7 @@ package main
 import (
 	noteappservice "core/internal/application/service/note"
 	notebookappservice "core/internal/application/service/notebook"
+	"core/internal/config"
 	noterepository "core/internal/infrastructure/postgresql/note"
 	notebookrepository "core/internal/infrastructure/postgresql/notebook"
 	notecontroller "core/internal/interfaces/rest/note"
@@ -30,6 +31,13 @@ func main() {
 	}
 	log.Printf("Application will run on port %s", sPort)
 
+	config := config.Config{
+		Table: config.Table{
+			Note:     os.Getenv("TABLE_NOTE"),
+			Notebook: os.Getenv("TABLE_NOTEBOOK"),
+		},
+	}
+
 	db, err := database.Driver{
 		User:         os.Getenv("DB_USER"),
 		Password:     os.Getenv("DB_PASSWORD"),
@@ -44,8 +52,8 @@ func main() {
 
 	defer db.Close()
 
-	noteRepository := noterepository.New(db)
-	notebookRepository := notebookrepository.New(db)
+	noteRepository := noterepository.New(db, config.Table.Note)
+	notebookRepository := notebookrepository.New(db, config.Table.Notebook)
 
 	noteService := noteappservice.New(noteRepository)
 	notebookService := notebookappservice.New(notebookRepository)
@@ -55,9 +63,15 @@ func main() {
 
 	r := mux.NewRouter()
 	v1 := r.PathPrefix("/v1").Subrouter()
-	v1.HandleFunc("/note", noteController.WriteNote).Methods("POST")
 	v1.HandleFunc("/notes", noteController.ReadNotes).Methods("GET")
+
+	v1.HandleFunc("/note", noteController.WriteNote).Methods("POST")
+	v1.HandleFunc("/note", noteController.DeleteNote).Methods("DELETE")
+
 	v1.HandleFunc("/notebooks", notebookConteroller.ReadNotebooks).Methods("GET")
+
+	v1.HandleFunc("/notebook", notebookConteroller.WriteNotebook).Methods("POST")
+	v1.HandleFunc("/notebook", notebookConteroller.DeleteNotebook).Methods("DELETE")
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000"}, // Allow specific origin
