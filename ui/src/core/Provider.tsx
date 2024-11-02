@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { WebPage } from "./models/config";
+import { WebPage } from "./config/config";
 import FullScreen from "./layouts/fullscreen.layout";
 import HealthCheck from "./pages/health-check/healthcheck";
 import NoteController from "./pages/note/note.controller";

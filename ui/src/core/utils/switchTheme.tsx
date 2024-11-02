@@ -1,4 +1,4 @@
-import { THEME_KEY, WebTheme } from "../models/config"
+import { THEME_KEY, WebTheme } from "../config/config"
 
 export function SwitchTheme() {
     const currentTheme = localStorage.getItem(THEME_KEY)

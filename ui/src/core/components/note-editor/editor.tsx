@@ -5,12 +5,16 @@ import "easymde/dist/easymde.min.css";
 import "./editor.darktheme.css";
 import "./editor.preview.css";
 import NotePreview from "../../models/note.preview";
+import { EDITOR_KEY } from "../../config/config";
 
 interface NoteEditorProps {
   notebookId: string | null
   note: NotePreview | null
   saveNote(note: NotePreview): void
 }
+
+var isUpdateTextArea = false
+var prevNotebookId: string | null = null
 
 export default function NoteEditor({ notebookId, note, saveNote }: NoteEditorProps) {
 
@@ -29,7 +33,7 @@ export default function NoteEditor({ notebookId, note, saveNote }: NoteEditorPro
       easyMdeRef.current = new EasyMDE({
         autosave: {
           enabled: true,
-          uniqueId: "tmpNote",
+          uniqueId: EDITOR_KEY,
           delay: saveDelay,
           timeFormat: {
             locale: 'en-US',
@@ -59,6 +63,17 @@ export default function NoteEditor({ notebookId, note, saveNote }: NoteEditorPro
 
     } else {
       // never update the textarea based on active note, it caused loop or textarea refreshed
+      const content = note ? note.Content : ""
+
+      if (!isUpdateTextArea && content !== "") {
+        easyMdeRef.current.value(content);
+        isUpdateTextArea = true
+      }
+
+      if (prevNotebookId !== notebookId && content !== "") {
+        easyMdeRef.current.value(content);
+        prevNotebookId = notebookId
+      }
     }
 
     // Set up the interval
@@ -66,13 +81,16 @@ export default function NoteEditor({ notebookId, note, saveNote }: NoteEditorPro
 
       if (easyMdeRef.current !== null) {
         const newContent = easyMdeRef.current.value();
+
         if (note === null) {
           if (notebookId) {
             saveNote(new NotePreview("", notebookId, "", newContent, new Date()));
           }
         } else {
-          note.UpdateContent(newContent);
-          saveNote(note);
+          if (newContent !== note.Content) {
+            note.UpdateContent(newContent);
+            saveNote(note);
+          }
         }
       }
     }, saveDelay);

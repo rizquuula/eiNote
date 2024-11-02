@@ -10,3 +10,4 @@ export const WebPage = Object.freeze({
   HEALTH_CHECK: '/health-check',
 });
 
+export const EDITOR_KEY = "myNote"

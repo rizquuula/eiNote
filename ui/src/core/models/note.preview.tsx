@@ -19,7 +19,11 @@ class NotePreview {
   }
 
   trim(content: string, start: number, end: number): string {
-    return content.slice(start, end) + "..."
+    if (content.length > end) {
+      return content.slice(start, end) + "..."
+    } else {
+      return content
+    }
   }
 
   SetActive(isActive: boolean): void {

@@ -4,6 +4,7 @@ import NoteView from "./note.view"
 import NotebookPreview from "../../models/notebook.preview";
 import NoteAPI from "../../api/note";
 import NotePreview from "../../models/note.preview";
+import { EDITOR_KEY } from "../../config/config";
 
 
 function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, noteApi: NoteAPI }) {
@@ -45,7 +46,7 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
   }, [notebookApi, noteApi, activeNotebook, activeNote]);
 
   const saveNote = async (note: NotePreview) => {
-    const newNote = await noteApi.CreateNote(note)
+    const newNote = await noteApi.SaveNote(note)
     if (note.ID === "") {
       setNotes([...notes, newNote])
     }
@@ -56,12 +57,13 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
   const createNotebook = async (name: string) => {
     const newNotebook = await notebookApi.CreateNotebook(new NotebookPreview("", name, null))
     setNotebooks([...notebooks, newNotebook])
-    if (!activeNotebook)
+    if (!activeNotebook || newNotebook.ID !== activeNotebook.ID)
       setActiveNotebook(newNotebook)
   }
 
   const deleteNotebook = async (notebook: NotebookPreview) => {
     await notebookApi.DeleteNotebook(notebook)
+    localStorage.removeItem("smde_" + EDITOR_KEY)
     window.location.reload()
   }
 
@@ -77,6 +79,11 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
     }
   }
 
+  const switchNotebook = (notebook: NotebookPreview) => {
+    setActiveNotebook(notebook)
+    setActiveNote(null)
+  }
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -88,7 +95,7 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
   return <NoteView
     notebooks={notebooks}
     activeNotebook={activeNotebook}
-    setActiveNotebook={setActiveNotebook}
+    setActiveNotebook={switchNotebook}
     createNotebook={createNotebook}
     notes={notes}
     activeNote={getActiveNote()}

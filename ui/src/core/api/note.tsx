@@ -54,7 +54,7 @@ class NoteAPI {
     return notebooks;
   }
 
-  async CreateNote(note: NotePreview): Promise<NotePreview> {
+  async SaveNote(note: NotePreview): Promise<NotePreview> {
 
     const myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
