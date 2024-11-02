@@ -1,4 +1,3 @@
-import CreateNoteBtn from "../../components/buttons/note.create"
 import CreateNotebookBtn from "../../components/buttons/notebook.create"
 import NoteEditor from "../../components/note-editor/editor"
 import NoteList from "../../components/note/note.list"

@@ -58,8 +58,7 @@ export default function NoteEditor({ notebookId, note, saveNote }: NoteEditorPro
       });
 
     } else {
-      const content = note ? note.Content : ""
-      easyMdeRef.current.value(content);
+      // never update the textarea based on active note, it caused loop or textarea refreshed
     }
 
     // Set up the interval

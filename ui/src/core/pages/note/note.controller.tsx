@@ -46,7 +46,10 @@ function NoteController({ notebookApi, noteApi }: { notebookApi: NotebookAPI, no
 
   const saveNote = async (note: NotePreview) => {
     const newNote = await noteApi.CreateNote(note)
-    setNotes([...notes, newNote])
+    if (note.ID === "") {
+      setNotes([...notes, newNote])
+    }
+
     setActiveNote(newNote)
   }
 
