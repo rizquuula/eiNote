@@ -6,7 +6,7 @@ function App() {
   const webTheme = localStorage.getItem("theme")
 
   return (
-    <div className={webTheme || ''}>
+    <div className={webTheme || 'dark'}>
       <Provider />
     </div>
   );

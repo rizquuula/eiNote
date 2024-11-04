@@ -18,5 +18,51 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    # ports:
+    #   - "7432:5432"  
+  
+  einote-be:
+    image: einote:core-0.1.0
+    container_name: einote-be
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      DB_USER: root
+      DB_PASSWORD: root
+      DB_NAME: einote
+      DB_HOST: einote-db
+      DB_PORT: 5432
+      TABLE_NOTE: note
+      TABLE_NOTEBOOK: notebook
+    # ports:
+    #   - 8080:8080
+    networks:
+      - default
+    depends_on:
+      - einote-db
+
+  einote-fe:
+    image: einote:ui-0.1.0
+    container_name: einote-fe
+    restart: unless-stopped
+    # ports:
+    #   - 3000:3000
+    volumes:
+      - ./nginx.fe.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - default
+    depends_on:
+      - einote-be
+
+  einote-proxy:
+    image: nginx:alpine3.19-slim
+    container_name: einote-px 
+    restart: unless-stopped
     ports:
-      - "7432:5432"  
+      - 4848:80 # changing port? don't forget adjust REACT_APP_BACKEND_API in Dockerfile.ui 
+    networks:
+      - default
+    depends_on:
+      - einote-fe
+    volumes:
+      - ./nginx.main.conf:/etc/nginx/conf.d/default.conf

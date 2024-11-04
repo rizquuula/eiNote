@@ -8,8 +8,9 @@ import NoteAPI from "./api/note";
 
 
 function Provider() {
-  const notebookApi = new NotebookAPI("http://localhost:2001", false)
-  const noteApi = new NoteAPI("http://localhost:2001", false)
+  const apiHost = process.env.REACT_APP_BACKEND_API ? process.env.REACT_APP_BACKEND_API : ""
+  const notebookApi = new NotebookAPI(apiHost, false)
+  const noteApi = new NoteAPI(apiHost, false)
   return (
     <BrowserRouter>
       <div className='bg-white dark:bg-black text-black dark:text-white'>

@@ -1,0 +1,36 @@
+# docker build -f Dockerfile.ui  -t einote:ui-0.1.0 .
+
+# build fe
+FROM node:18-alpine AS build_stage
+
+# Install additional dependencies for Node.js on Alpine
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /fe
+
+COPY ./ui/package.json \
+     ./ui/package-lock.json \
+     ./ui/postcss.config.js \
+     ./ui/tailwind.config.js \
+     ./ui/tsconfig.json \
+     ./
+
+COPY ./ui/src ./src
+COPY ./ui/public ./public
+
+RUN npm install --loglevel info
+
+# backend api will be proxied in nginx
+ENV REACT_APP_BACKEND_API=http://localhost:4848/api
+
+RUN npm run build --loglevel info
+
+# build nginx to serve FE
+FROM nginx:alpine3.19-slim
+
+COPY --from=build_stage /fe/build /usr/share/nginx/html
+
+COPY ./nginx.fe.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 3000
+CMD ["nginx", "-g", "daemon off;"]

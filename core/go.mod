@@ -1,6 +1,6 @@
 module core
 
-go 1.23.0
+go 1.23
 
 require (
 	github.com/Masterminds/squirrel v1.5.4
